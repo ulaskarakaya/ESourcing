@@ -7,7 +7,6 @@ services:
     restart: always
     volumes:
         - ${WEBAPP_STORAGE_HOME}/site:/data/db
-        #- ./data:/data/db
     ports:
         - "27017:27017"
 

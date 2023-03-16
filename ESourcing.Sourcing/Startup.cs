@@ -1,15 +1,15 @@
+using ESourcing.Sourcing.Data.Interface;
+using ESourcing.Sourcing.Data;
+using ESourcing.Sourcing.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ESourcing.Sourcing.Repositories.Interfaces;
+using ESourcing.Sourcing.Repositories;
 
 namespace ESourcing.Sourcing
 {
@@ -27,6 +27,16 @@ namespace ESourcing.Sourcing
         {
 
             services.AddControllers();
+
+            services.Configure<SourcingDatabaseSettings>(Configuration.GetSection(nameof(SourcingDatabaseSettings)));
+
+            services.AddSingleton<ISourcingDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<SourcingDatabaseSettings>>().Value);
+
+            services.AddTransient<ISourcingContext, SourcingContext>();
+            services.AddTransient<IAuctionRepository, AuctionRepository>();
+            services.AddTransient<IBidRepository, BidRepository>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ESourcing.Sourcing", Version = "v1" });
